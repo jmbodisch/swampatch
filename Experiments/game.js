@@ -17,7 +17,7 @@ function generateWell() {       //This will fill the well using generateRow() re
     for (var i = 0; i < height; i++) {
         generateRow();
         for (var j = 0; j < width; j++) {
-            well[(i*6)+j] = previousRow[j];        
+            well[(i*width)+j] = previousRow[j];        
         }
     }
 }
@@ -38,7 +38,7 @@ function generateRow() {        //This will create a row of random blocks
 function displayWell() {        
     for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
-            document.write(well[(i*6)+j] + " ");
+            document.write(well[(i*width)+j] + " ");
         }
         document.write("<br>");
     }
