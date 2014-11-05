@@ -5,6 +5,8 @@ var well = [];
 var previousRow = [];       // This is needed to ensure that adjacent generated blocks are not the same color
 var cursorPos = 0;          // 2-wide cursor; the number corresponds to the block the left half of the cursor is on
 var wellDisplay = document.getElementById("p1");
+var timerDisplay = document.getElementById("p2");
+var timer = 0;
 var buttonUp = document.getElementById("button1");
 var buttonDown = document.getElementById("button2");
 var buttonLeft = document.getElementById("button3");
@@ -28,7 +30,6 @@ function generateWell() {       //This will fill the well using generateRow() re
             well[(i*width)+j] = previousRow[j];        
         }
     }
-    displayWell();
 }
 
 function generateRow() {        //This will create a row of random blocks
@@ -64,7 +65,6 @@ function moveCursorDown() {
         return;
     else {
         cursorPos = cursorPos - width;
-        displayWell();
     }
 }
 
@@ -73,7 +73,6 @@ function moveCursorUp() {
         return;
     else {
         cursorPos = cursorPos + width;
-        displayWell();
     }
 }
 
@@ -82,7 +81,6 @@ function moveCursorLeft() {
         return;
     else {
         cursorPos = cursorPos - 1;
-        displayWell();
     }
 }
 
@@ -91,7 +89,6 @@ function moveCursorRight() {
         return;
     else {
         cursorPos = cursorPos + 1;
-        displayWell();
     }
 }
 
@@ -100,7 +97,6 @@ function swapBlocks() {
     tempValue = well[cursorPos];
     well[cursorPos] = well[cursorPos + 1];
     well[cursorPos + 1] = tempValue;
-    displayWell();
 }
 
 function initializePage() {
@@ -112,6 +108,13 @@ function initializePage() {
     buttonReroll.addEventListener("click", generateWell);
     initializeWell();
     generateWell();
+    setInterval(update, 16);
+}
+
+function update() {
+    displayWell();
+    timer++;
+    timerDisplay.innerHTML = timer;
 }
 
 initializePage();
