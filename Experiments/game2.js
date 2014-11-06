@@ -32,33 +32,32 @@ function generateWell() {       //This will fill the well using generateRow() re
     }
 }
 
-function imgAssign() {				//this will assign images to the blocks (hopefully)
-var colorNumber = Math.floor((Math.random() * numOfColors)) + 1 //the number of the color
-var imgAssigned 					//value that will be returned to the well
-switch(colorNumber) {				//will assign different images depending on the color number
-case 1:
-	imgAssigned="<img src='Data/graphics/block1.png'>"
-	break;
-	case 2:
-	imgAssigned="<img src='Data/graphics/block2.png'>"
-	break;
-	case 3:
-	imgAssigned="<img src='Data/graphics/block3.png'>"
-	break;
-	case 4:
-	imgAssigned="<img src='Data/graphics/block4.png'>"
-	break;
-	case 5:
-	imgAssigned="<img src='Data/graphics/block5.png'>"
-	break;
-	}
-	return imgAssigned;
+function imgAssign(colorNumber) {		//this will assign images to the blocks (hopefully)
+    var imgAssigned 					//value that will be returned to the well
+    switch(colorNumber) {				//will assign different images depending on the color number
+    case 1:
+	    imgAssigned="<img src='Data/graphics/block1.png'>"
+	    break;
+	    case 2:
+	    imgAssigned="<img src='Data/graphics/block2.png'>"
+	    break;
+	    case 3:
+	    imgAssigned="<img src='Data/graphics/block3.png'>"
+	    break;
+	    case 4:
+	    imgAssigned="<img src='Data/graphics/block4.png'>"
+	    break;
+	    case 5:
+	    imgAssigned="<img src='Data/graphics/block5.png'>"
+	    break;
+	    }
+	    return imgAssigned;
 }
 function generateRow() {        //This will create a row of random blocks
     var newRow = [];
     for (var i = 0; i < width; i++) {
         do {
-            do {newRow[i] = (imgAssign());    //Colors start from 1
+            do {newRow[i] = (Math.floor((Math.random() * numOfColors)) + 1);    //Colors start from 1
             } while (i > 0 && newRow[i] == newRow[i-1]);    // Pick a random color and repeat until it doesn't match the one left to it...
         } while (newRow[i] == previousRow[i]);              // ...This check can only be done if i>0
         //Repeat until it doesn't match the one directly above it
@@ -74,9 +73,9 @@ function displayWell() {
         for (var j = 0; j < width; j++) {
             currentPos = (i*width+j);
             if (currentPos == cursorPos || currentPos == cursorPos+1)
-                wellDisplay.innerHTML += "<img style=\"position:absolute\" src='Data/graphics/swampatch_select.png'>" + well[currentPos];
+                wellDisplay.innerHTML += "<img style=\"position:absolute\" src='Data/graphics/swampatch_select.png'>" + imgAssign(well[currentPos]);
             else
-                wellDisplay.innerHTML += well[currentPos];
+                wellDisplay.innerHTML += imgAssign(well[currentPos]);
         }
         wellDisplay.innerHTML += "<br>";
     }
