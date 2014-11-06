@@ -32,6 +32,10 @@ function generateWell() {       //This will fill the well using generateRow() re
     }
 }
 
+function generateWell2() {      // This gives a 10 combo; there was a bug but it is fixed now
+    well = [3, 2, 3, 5, 1, 3, 2, 1, 4, 3, 4, 5, 1, 2, 3, 5, 3, 2, 4, 3, 5, 4, 2, 3, 1, 4, 3, 2, 3, 2, 2, 3, 5, 4, 1, 4, 1, 2, 4, 2, 4, 1, 3, 5, 2, 4, 3, 2, 5, 3, 1, 4, 3, 1, 2, 4, 4, 3, 4, 5, 3, 5, 3, 4, 3, 2, 1, 4, 2, 5, 4, 1];
+}
+
 function generateRow() {        //This will create a row of random blocks
     var newRow = [];
     for (var i = 0; i < width; i++) {
@@ -130,11 +134,14 @@ function swapBlocks() {
 }
 
 function checkBlockForMatch(blockPos) {
-    var listOfMatchingBlocks = [];                              // This is a list of blocks found to match the block being checked,
-    listOfMatchingBlocks = checkForVerticalMatches(blockPos);   // ...and it will be passed around between functions
-    //checkForHorizontalMatches(blockPos);                      // This function does not exist yet
-    if (listOfMatchingBlocks.length >= MINIMUM_FOR_MATCH)       // If we have 3 or more blocks matching...
-        onMatch(listOfMatchingBlocks);                          // ...let onMatch do its magic!
+    var listOfMatchingVBlocks = [];                             // This is a list of blocks found to match the block being checked,
+    var listOfMatchingHBlocks = [];                             // Separate lists for horizontal and vertical                             
+    listOfMatchingVBlocks = checkForVerticalMatches(blockPos);  // They will be passed around between functions
+    listOfMatchingHBlocks = checkForHorizontalMatches(blockPos);
+    if (listOfMatchingVBlocks.length >= MINIMUM_FOR_MATCH)       // If we have 3 or more blocks matching...
+        onMatch(listOfMatchingVBlocks);                          // ...let onMatch do its magic!
+    if (listOfMatchingHBlocks.length >= MINIMUM_FOR_MATCH)
+        onMatch(listOfMatchingHBlocks);
 }
 
 function checkForVerticalMatches(blockPos) {                    // Check for a vertical match anchored from the node block at blockPos
@@ -162,7 +169,40 @@ function checkForVerticalMatches(blockPos) {                    // Check for a v
         else {
             if (well[blockPos] == well[checkPos]) {
                 match = true;
-                statusDisplay.innerHTML += "Found match at " + checkPos;
+                listOfMatchingBlocks.push(checkPos);
+            }
+            else
+                match = false;
+        }
+    } while (match);
+    return listOfMatchingBlocks;
+}
+
+function checkForHorizontalMatches(blockPos) {
+    var match = false;
+    var checkPos = blockPos;
+    var listOfMatchingBlocks = [blockPos];
+    do {
+        if (checkPos % width == 0)
+            match = false;
+        else {
+            checkPos = checkPos - 1;
+            if (well[blockPos] == well[checkPos]) {
+                match = true;
+                listOfMatchingBlocks.push(checkPos);
+            }
+            else
+                match = false;
+        }
+    } while (match);
+    checkPos = blockPos;
+    do {
+        checkPos = checkPos + 1;
+        if (checkPos % width == 0)
+            match = false;
+        else {
+            if (well[blockPos] == well[checkPos]) {
+                match = true;
                 listOfMatchingBlocks.push(checkPos);
             }
             else
@@ -174,7 +214,8 @@ function checkForVerticalMatches(blockPos) {                    // Check for a v
 
 function onMatch(listOfBlocks) {                                // Magical sparkle rainbow unicorn function that does handles the event of a match
     for (var i = 0; i < listOfBlocks.length; i++) {
-        well[listOfBlocks[i]] += 10;                            // Currently it just adds 10 to matching blocks and nothing else
+        if (well[listOfBlocks[i]] < 10)                         // Added this check so it would not "clear" the same block multiple times
+            well[listOfBlocks[i]] += 10;
     }
 }
 
@@ -193,7 +234,7 @@ function initializePage() {
     buttonSwap.addEventListener("click", swapBlocks);       //
     buttonReroll.addEventListener("click", generateWell);   //
     initializeWell();
-    generateWell();
+    generateWell2();
     setInterval(update, 16);
 }
 
