@@ -92,6 +92,29 @@ function moveCursorRight() {
     }
 }
 
+function onKeyDown(e) {
+    switch(e.keyCode) {
+        case 37:            // left arrow
+            moveCursorLeft();
+            break;
+        case 38:            // up arrow
+            moveCursorUp();
+            break;
+        case 39:            // right arrow
+            moveCursorRight();
+            break;
+        case 40:            // down arrow
+            moveCursorDown();
+            break;
+        case 82:            // r
+            generateWell();
+            break;
+        case 83:            // s
+            swapBlocks();
+            break;
+    }
+}
+
 function swapBlocks() {
     var tempValue;
     tempValue = well[cursorPos];
@@ -100,12 +123,13 @@ function swapBlocks() {
 }
 
 function initializePage() {
-    buttonUp.addEventListener("click", moveCursorUp);
-    buttonDown.addEventListener("click", moveCursorDown);
-    buttonLeft.addEventListener("click", moveCursorLeft);
-    buttonRight.addEventListener("click", moveCursorRight);
-    buttonSwap.addEventListener("click", swapBlocks);
-    buttonReroll.addEventListener("click", generateWell);
+    window.addEventListener("keydown", onKeyDown, true);
+    buttonUp.addEventListener("click", moveCursorUp);       // All of these can be removed
+    buttonDown.addEventListener("click", moveCursorDown);   //
+    buttonLeft.addEventListener("click", moveCursorLeft);   //
+    buttonRight.addEventListener("click", moveCursorRight); //
+    buttonSwap.addEventListener("click", swapBlocks);       //
+    buttonReroll.addEventListener("click", generateWell);   //
     initializeWell();
     generateWell();
     setInterval(update, 16);
