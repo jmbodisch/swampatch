@@ -4,9 +4,9 @@ var numOfColors = 5;        // easy mode = 5; hard = 6
 var well = [];
 var previousRow = [];       // This is needed to ensure that adjacent generated blocks are not the same color
 var cursorPos = 0;          // 2-wide cursor; the number corresponds to the block the left half of the cursor is on
+var MINIMUM_FOR_MATCH = 3;
 var wellDisplay = document.getElementById("p1");
-var timerDisplay = document.getElementById("p2");
-var timer = 0;
+var statusDisplay = document.getElementById("p2");
 var buttonUp = document.getElementById("button1");
 var buttonDown = document.getElementById("button2");
 var buttonLeft = document.getElementById("button3");
@@ -47,14 +47,19 @@ function generateRow() {        //This will create a row of random blocks
 
 function displayWell() {
     wellDisplay.innerHTML = "";
-    var currentPos;        
+    var currentPos;
+    var displayNumber = "";        
     for (var i = height - 1; i >= 0; i--) {
         for (var j = 0; j < width; j++) {
             currentPos = (i*width+j);
-            if (currentPos == cursorPos || currentPos == cursorPos+1)
-                wellDisplay.innerHTML += "<span style=\"color:white ; background-color:black\">" + well[currentPos] + "</span>" + " ";
+            if (well[currentPos] >= 10)                                      // Values above 10 are "matched" blocks, display them as bold
+                displayNumber = "<b>" + (well[currentPos] - 10) + "</b>";
             else
-                wellDisplay.innerHTML += well[currentPos] + " ";
+                displayNumber = well[currentPos];
+            if (currentPos == cursorPos || currentPos == cursorPos+1)
+                wellDisplay.innerHTML += "<span style=\"color:white ; background-color:black\">" + displayNumber + "</span>" + " ";
+            else
+                wellDisplay.innerHTML += displayNumber + " ";
         }
         wellDisplay.innerHTML += "<br>";
     }
@@ -120,6 +125,63 @@ function swapBlocks() {
     tempValue = well[cursorPos];
     well[cursorPos] = well[cursorPos + 1];
     well[cursorPos + 1] = tempValue;
+    checkBlockForMatch(cursorPos);
+    checkBlockForMatch(cursorPos+1);
+}
+
+function checkBlockForMatch(blockPos) {
+    var listOfMatchingBlocks = [];                              // This is a list of blocks found to match the block being checked,
+    listOfMatchingBlocks = checkForVerticalMatches(blockPos);   // ...and it will be passed around between functions
+    //checkForHorizontalMatches(blockPos);                      // This function does not exist yet
+    if (listOfMatchingBlocks.length >= MINIMUM_FOR_MATCH)       // If we have 3 or more blocks matching...
+        onMatch(listOfMatchingBlocks);                          // ...let onMatch do its magic!
+}
+
+function checkForVerticalMatches(blockPos) {                    // Check for a vertical match anchored from the node block at blockPos
+    var match = false;
+    var checkPos = blockPos;
+    var listOfMatchingBlocks = [blockPos];                      // The node block matches itself, so I put it in the list. It seems to make things easier
+    do {                                                        // First check downward
+        checkPos = checkPos - width;
+        if (checkPos < 0)                                       // Nothing exists O/B and cannot match anything
+            match = false;
+        else {
+            if (well[blockPos] == well[checkPos]) {
+                match = true;
+                listOfMatchingBlocks.push(checkPos);            // A matching block was found, add it to the list
+            }
+            else
+                match = false;                                  // No matching block was found, we don't need to continue in this loop
+        }
+    } while (match);
+    checkPos = blockPos;                                        // Go back to where we started
+    do {                                                        // Now check upward
+        checkPos = checkPos + width;
+        if (checkPos >= width * height)                         // O/B
+            match = false;
+        else {
+            if (well[blockPos] == well[checkPos]) {
+                match = true;
+                statusDisplay.innerHTML += "Found match at " + checkPos;
+                listOfMatchingBlocks.push(checkPos);
+            }
+            else
+                match = false;
+        }
+    } while (match);
+    return listOfMatchingBlocks;
+}
+
+function onMatch(listOfBlocks) {                                // Magical sparkle rainbow unicorn function that does handles the event of a match
+    for (var i = 0; i < listOfBlocks.length; i++) {
+        well[listOfBlocks[i]] += 10;                            // Currently it just adds 10 to matching blocks and nothing else
+    }
+}
+
+function listMatches(listOfBlocks) {                            // Prints the current list of matching blocks to the page;
+    for (var i = 0; i < listOfBlocks.length; i++) {             // ...this might be useful later.
+        statusDisplay.innerHTML += "<br>" + listOfBlocks[i];
+    }
 }
 
 function initializePage() {
@@ -137,8 +199,6 @@ function initializePage() {
 
 function update() {
     displayWell();
-    timer++;
-    timerDisplay.innerHTML = timer;
 }
 
 initializePage();
