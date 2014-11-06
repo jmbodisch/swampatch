@@ -32,10 +32,9 @@ function generateWell() {       //This will fill the well using generateRow() re
     }
 }
 
-function imgAssign() {				//this will assign images to the blocks (hopefully)
-var colorNumber = Math.floor((Math.random() * numOfColors)) + 1 //the number of the color
+function imgAssign(colorNum) {				//this will assign images to the blocks (hopefully)
 var imgAssigned 					//value that will be returned to the well
-switch(colorNumber) {				//will assign different images depending on the color number
+switch(colorNum) {				//will assign different images depending on the color number
 case 1:
 	imgAssigned="<img src='Data/graphics/block1.png'>"
 	break;
@@ -58,7 +57,7 @@ function generateRow() {        //This will create a row of random blocks
     var newRow = [];
     for (var i = 0; i < width; i++) {
         do {
-            do {newRow[i] = (imgAssign());    //Colors start from 1
+            do {newRow[i] = (imgAssign(colorGen()));    //generate a color number, then pass it into the image assignment
             } while (i > 0 && newRow[i] == newRow[i-1]);    // Pick a random color and repeat until it doesn't match the one left to it...
         } while (newRow[i] == previousRow[i]);              // ...This check can only be done if i>0
         //Repeat until it doesn't match the one directly above it
@@ -137,6 +136,11 @@ function update() {
     displayWell();
     timer++;
     timerDisplay.innerHTML = timer;
+}
+
+function colorGen() {		//generate a color number name
+var colorNumber = Math.floor((Math.random() * numOfColors)) + 1 //the number of the color
+return colorNumber;
 }
 
 initializePage();
