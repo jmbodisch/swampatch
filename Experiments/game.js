@@ -5,7 +5,7 @@ var well = [];
 var previousRow = [];       // This is needed to ensure that adjacent generated blocks are not the same color
 var cursorPos = 0;          // 2-wide cursor; the number corresponds to the block the left half of the cursor is on
 var MINIMUM_FOR_MATCH = 3;
-var wellDisplay = document.getElementById("p1");
+var MATCHED_STATE = 10;     // This value is added to blocks when they match
 var statusDisplay = document.getElementById("p2");
 var buttonUp = document.getElementById("button1");
 var buttonDown = document.getElementById("button2");
@@ -13,6 +13,7 @@ var buttonLeft = document.getElementById("button3");
 var buttonRight = document.getElementById("button4");
 var buttonSwap = document.getElementById("button5");
 var buttonReroll = document.getElementById("button6");
+var timer = 0;
 
 function initializeWell() {     //Well is empty and of size 0; "inflate" it with 0's (blank) to the right size
     for (var i = 0; i < (width * height); i++) {
@@ -47,26 +48,6 @@ function generateRow() {        //This will create a row of random blocks
         previousRow[i] = newRow[i];     // Copy the new values to previousRow so generateWell can use them
     }
     
-}
-
-function displayWell() {
-    wellDisplay.innerHTML = "";
-    var currentPos;
-    var displayNumber = "";        
-    for (var i = height - 1; i >= 0; i--) {
-        for (var j = 0; j < width; j++) {
-            currentPos = (i*width+j);
-            if (well[currentPos] >= 10)                                      // Values above 10 are "matched" blocks, display them as bold
-                displayNumber = "<b>" + (well[currentPos] - 10) + "</b>";
-            else
-                displayNumber = well[currentPos];
-            if (currentPos == cursorPos || currentPos == cursorPos+1)
-                wellDisplay.innerHTML += "<span style=\"color:white ; background-color:black\">" + displayNumber + "</span>" + " ";
-            else
-                wellDisplay.innerHTML += displayNumber + " ";
-        }
-        wellDisplay.innerHTML += "<br>";
-    }
 }
 
 function moveCursorDown() {
@@ -214,8 +195,8 @@ function checkForHorizontalMatches(blockPos) {
 
 function onMatch(listOfBlocks) {                                // Magical sparkle rainbow unicorn function that does handles the event of a match
     for (var i = 0; i < listOfBlocks.length; i++) {
-        if (well[listOfBlocks[i]] < 10)                         // Added this check so it would not "clear" the same block multiple times
-            well[listOfBlocks[i]] += 10;
+        if (well[listOfBlocks[i]] < MATCHED_STATE)                         // Added this check so it would not "clear" the same block multiple times
+            well[listOfBlocks[i]] += MATCHED_STATE;
     }
 }
 
@@ -233,6 +214,10 @@ function initializePage() {
     buttonRight.addEventListener("click", moveCursorRight); //
     buttonSwap.addEventListener("click", swapBlocks);       //
     buttonReroll.addEventListener("click", generateWell);   //
+    initializeGraphics();           // Currently this controls when the game will start--only after the graphics have loaded
+}
+
+function startGame() {
     initializeWell();
     generateWell2();
     setInterval(update, 16);
