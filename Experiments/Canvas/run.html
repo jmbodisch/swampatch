@@ -56,30 +56,26 @@ function displayWell() {
     //wellDisplay.innerHTML = "";
     var currentPos;
     var displayNumber = "";        
-    for (var i = numberOfRows - 1; i >= 0; i--) {
-        for (var j = 0; j < numberOfColumns; j++) {
+    for (var i = 0; i < 20; i++) {
+        for (var j = 0; j < 6; j++) {
             currentPos = (i*pixelsPerColumn+j*pixelsPerRow);
 			switch(well[currentPos])
 			{
-				case 0:
-				ctx.fillStyle = "#FF0000";
-				case 1:
-				ctx.fillStyle = "#00FF00";
-				break;
-				case 2:
-				ctx.fillStyle = "#0000FF";
-				break;
-				case 3:
-				ctx.fillStyle = "#FFFF00";
-				break;
-				case 4:
-				ctx.fillStyle = "#00FFFF";
-				break;
-				case 5:
-				ctx.fillStyle = "#FF00FF";
-				break;
+				if (well[currentPos] == 0)
+					ctx.fillStyle = "#FF0000";
+				if (well[currentPos] == 1)
+					ctx.fillStyle = "#00FF00";
+				if (well[currentPos] == 2)
+					ctx.fillStyle = "#0000FF";
+				if (well[currentPos] == 3)
+					ctx.fillStyle = "#FFFF00";
+				if (well[currentPos] == 4)
+					ctx.fillStyle = "#FF00FF";
+				if (well[currentPos] == 5)
+					ctx.fillStyle = "#00FFFF";
 			}
-			ctx.fillRect(i*pixelsPerColumn,j*pixelsPerRow,(i+1)*pixelsPerColumn,(j+1)*pixelsPerRow)
+			currentPos++;
+			ctx.fillRect((j*pixelsPerRow)+2,(i*pixelsPerColumn)+2,((j+1)*pixelsPerRow)-2,((i+1)*pixelsPerColumn)-2);
             //if (well[currentPos] >= 10)                                      // Values above 10 are "matched" blocks, display them as bold
              //   displayNumber = "<b>" + (well[currentPos] - 10) + "</b>";
            // else
@@ -89,6 +85,7 @@ function displayWell() {
             //else
             //wellDisplay.innerHTML += displayNumber + " ";
         }
+		currentPos++;
         //wellDisplay.innerHTML += "<br>";
     }
 }
